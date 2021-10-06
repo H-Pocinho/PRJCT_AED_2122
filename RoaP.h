@@ -15,9 +15,9 @@
 */
 
 void FASE1(char str[]);
-void A1(int L, int C, int l, int c, int *maze);
-void A234(int L, int C, int l, int c, int *maze,int v);
-void A5(int L, int C, int l, int c, int *maze);
+int A1(int L, int C, int l, int c, int *maze);
+int A234(int L, int C, int l, int c, int *maze,int v);
+int A5(int L, int C, int l, int c, int *maze);
 
 
 

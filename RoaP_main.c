@@ -15,7 +15,7 @@ void FASE1(char str[]){
 
     FILE *fpIN, *fpOUT;
 
-    int C,L,P,i=0,c,l,v,cIMP,lIMP,cF,lF,aux;
+    int C,L,P,i=0,c,l,v,cIMP,lIMP,cF,lF,aux,flag=0;
     int *labirinto;
     char tipo[3], *filename;
     int namesize=strlen(str);
@@ -54,6 +54,11 @@ void FASE1(char str[]){
     }
 
     do{ 
+        if (flag==1){
+            fseek(fpIN,-sizeof(char),SEEK_CUR);
+            flag=0;
+        }
+        
         if (fscanf(fpIN,"%d %d",&L,&C)!=2)
         {
             free(filename);
@@ -121,17 +126,7 @@ void FASE1(char str[]){
             }
             labirinto[(l-1)*C+c-1]=v;
         }
-
-        if (getc(fpIN)==EOF)        //ve se chegou ao fim do ficheiro
-        {  
-            free(labirinto);
-            fclose(fpOUT);
-            fclose(fpIN);
-            free(filename);
-            exit(0);
-        }
         
-
         switch (aux=tipo[1]-'0')                  //escolhe o modo de funfar (ou seja funcionar, mas funfar é mais giro de escrever)
         {
         case 1:
@@ -161,7 +156,7 @@ void FASE1(char str[]){
             exit(0);
             break;
         }
-
+        flag=1;
         free(labirinto);
     }while((getc(fpIN)!=EOF));
 

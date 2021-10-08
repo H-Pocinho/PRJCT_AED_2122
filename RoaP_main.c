@@ -53,7 +53,7 @@ void FASE1(char str[]){
         exit(0);
     }
 
-    do{
+    do{ 
         if (fscanf(fpIN,"%d %d",&L,&C)!=2)
         {
             free(filename);
@@ -88,9 +88,6 @@ void FASE1(char str[]){
             exit(0);
         }
         
-       
-        
-
         if(strcmp(tipo,"A6")==0){
             if (fscanf(fpIN, "%d %d",&lF,&cF)!=2)
             {
@@ -189,78 +186,58 @@ int A1(int L, int C, int lIMP, int cIMP, int *maze){
 
 
 int A234(int L, int C, int l, int c, int *maze,int v){
+    int aux=0;
+
     if (c-1<0 || l-1<0 || l>L || c>C)
     {
         return -2;
     }
+
     if (v==1){
-        if ((!(c<0 || l-1<0 || l>L || c+1>C))){
-            if ((maze[(l-1)*C + c]!=0) && (maze[(l-1)*C + c]!=-1))
-            {
-                return 1;
-            }
-        } if ((!(c-2<0 || l-1<0 || l>L || c-1>C))){
-            if ((maze[(l-1)*C + c-2]!=0) && (maze[(l-1)*C + c-2]!=-1))
-            {
-                return 1;
-            }
-        } if ((!(c-1<0 || l<0 || l+1>L || c>C))){
-            if ((maze[(l)*C + c-1]!=0) && (maze[(l)*C + c-1]!=-1))
-            {
-                return 1;
-            }
-        } if ((!(c-1<0 || l-2<0 || l-1>L || c>C))){
-            if ((maze[(l-2)*C + c-1]!=0) && (maze[(l-2)*C + c-1]!=-1))
-            {
-                return 1;
-            }
+        aux=A1(L,C,l+1,c,maze);
+        if (aux!=0 && aux!=-1 && aux!=-2){
+            return 1;
+        } 
+        aux=A1(L,C,l-1,c,maze);
+        if (aux!=0 && aux!=-1 && aux!=-2){
+            return 1;
+        }
+        aux=A1(L,C,l,c+1,maze);
+        if (aux!=0 && aux!=-1 && aux!=-2){
+            return 1;
+        }
+        aux=A1(L,C,l,c-1,maze); 
+        if (aux!=0 && aux!=-1 && aux!=-2){
+            return 1;
         }
     }else{
-        if ((!(c<0 || l-1<0 || l>L || c+1>C))){
-            if (maze[(l-1)*C + c]==v)
-            {
-                return 1;
-            }
-        } if ((!(c-2<0 || l-1<0 || l>L || c-1>C))){
-            if (maze[(l-1)*C + c-2]==v)
-            {
-                return 1;
-            }
-        } if ((!(c-1<0 || l<0 || l+1>L || c>C))){
-            if (maze[(l)*C + c-1]==v)
-            {
-                return 1;
-            }
-        } if ((!(c-1<0 || l-2<0 || l-1>L || c>C))){
-            if (maze[(l-2)*C + c-1]==v)
-            {
-                return 1;
-            }
+        if (A1(L,C,l+1,c,maze)==v){
+            return 1;
+        } if (A1(L,C,l-1,c,maze)==v){
+            return 1;
+        } if (A1(L,C,l,c+1,maze)==v){
+            return 1;
+        } if (A1(L,C,l,c-1,maze)==v){
+            return 1;
         }
     }
     return 0;
 }
 
 int A5(int L, int C, int l, int c, int *maze){
-    if (c-1<0 || l-1<0 || l>L || c>C){
+    int aux=A1(L,C,l,c,maze);
+
+    if (aux==-2){
         return -2;
-    }else if(( maze[(l-1)*C + c-1]==0 || maze[(l-1)*C + c-1]==-1 )){
+    }else if(( aux==0 || aux==-1 )){
         return -1;
-    }else if(l+1>L && c+1>C){
+    }else if(( A1(L,C,l+1,c,maze)!=0 && A1(L,C,l,c+1,maze)!=0 )){
         return 0;
-    }else if(l+1>L && c-2<0){
+    }else if(( A1(L,C,l+1,c,maze)!=0 && A1(L,C,l,c-1,maze)!=0 )){
         return 0;
-    }else if(l-2<0 && c-2<0){
+    }else if(( A1(L,C,l-1,c,maze)!=0 && A1(L,C,l,c+1,maze)!=0 )){
         return 0;
-    }else if(l-2<0 && c+1>C){
-        return 0;
-    }else if(( maze[(l-1)*C + c]!=0 && maze[(l)*C + c-1]!=0 )){
-        return 0;
-    }else if(( maze[(l-1)*C + c-2]!=0 && maze[(l)*C + c-1]!=0 )){
-        return 0;
-    }else if(( maze[(l-1)*C + c-2]!=0 && maze[(l-2)*C + c-1]!=0 )){
-        return 0;
-    }else if(( maze[(l-1)*C + c]!=0 && maze[(l-2)*C + c-1]!=0 )){
+    }else if(( A1(L,C,l-1,c,maze)!=0 && A1(L,C,l,c-1,maze)!=0 )){
         return 0;
     }else{
         return 1;

@@ -29,7 +29,9 @@ void FASE1(char str[]){
         exit(EXIT_FAILURE);
     }
 
+    //guarda o nome do ficheiro sem a extensao
     filename=strtok(str,".");
+    //concatena a extensão para o ficheiro de saida
     strcat(filename, ".sol1");
 
      if ((fpOUT= fopen(filename, "w+"))==NULL){                                     //abre o ficheiro de saída

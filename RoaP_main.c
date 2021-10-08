@@ -68,6 +68,7 @@ void FASE1(char str[]){
 
         fscanf(fpIN,"%d",&P);
 
+        /*atribui o valor às casas necessárias*/
         for(i=0;i<P;i++){
             fscanf(fpIN,"%d %d %d",&l,&c,&v);
             labirinto[(l-1)*C+c-1]=v;

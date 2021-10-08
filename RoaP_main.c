@@ -194,30 +194,51 @@ int A234(int L, int C, int l, int c, int *maze,int v){
         return -2;
     }
     if (v==1){
-        if ((maze[(l-1)*C + c]!=0) && (maze[(l-1)*C + c]!=-1) && (!(c<0 || l-1<0 || l>L || c+1>C))){
-            return 1;
-        }else if ((maze[(l-1)*C + c-2]!=0) && (maze[(l-1)*C + c-2]!=-1) && (!(c-2<0 || l-1<0 || l>L || c-1>C))){
-            return 1;
-        }else if ((maze[(l)*C + c-1]!=0) && (maze[(l)*C + c-1]!=-1) && (!(c-1<0 || l<0 || l+1>L || c>C))){
-            return 1;
-        }else if ((maze[(l-2)*C + c-1]!=0) && (maze[(l-2)*C + c-1]!=-1) && (!(c-1<0 || l-2<0 || l-1>L || c>C))){
-            return 1;
-        }else{        
-            return 0;
+        if ((!(c<0 || l-1<0 || l>L || c+1>C))){
+            if ((maze[(l-1)*C + c]!=0) && (maze[(l-1)*C + c]!=-1))
+            {
+                return 1;
+            }
+        } if ((!(c-2<0 || l-1<0 || l>L || c-1>C))){
+            if ((maze[(l-1)*C + c-2]!=0) && (maze[(l-1)*C + c-2]!=-1))
+            {
+                return 1;
+            }
+        } if ((!(c-1<0 || l<0 || l+1>L || c>C))){
+            if ((maze[(l)*C + c-1]!=0) && (maze[(l)*C + c-1]!=-1))
+            {
+                return 1;
+            }
+        } if ((!(c-1<0 || l-2<0 || l-1>L || c>C))){
+            if ((maze[(l-2)*C + c-1]!=0) && (maze[(l-2)*C + c-1]!=-1))
+            {
+                return 1;
+            }
         }
     }else{
-        if ((maze[(l-1)*C + c]==v) && (!(c<0 || l-1<0 || l>L || c+1>C))){
-            return 1;
-        }else if ((maze[(l-1)*C + c-2]==v) && (!(c-2<0 || l-1<0 || l>L || c-1>C))){
-            return 1;
-        }else if ((maze[(l)*C + c-1]==v) && (!(c-1<0 || l<0 || l+1>L || c>C))){
-            return 1;
-        }else if ((maze[(l-2)*C + c-1]==v) && (!(c-1<0 || l-2<0 || l-1>L || c>C))){
-            return 1;
-        }else{        
-            return 0;
+        if ((!(c<0 || l-1<0 || l>L || c+1>C))){
+            if (maze[(l-1)*C + c]==v)
+            {
+                return 1;
+            }
+        } if ((!(c-2<0 || l-1<0 || l>L || c-1>C))){
+            if (maze[(l-1)*C + c-2]==v)
+            {
+                return 1;
+            }
+        } if ((!(c-1<0 || l<0 || l+1>L || c>C))){
+            if (maze[(l)*C + c-1]==v)
+            {
+                return 1;
+            }
+        } if ((!(c-1<0 || l-2<0 || l-1>L || c>C))){
+            if (maze[(l-2)*C + c-1]==v)
+            {
+                return 1;
+            }
         }
     }
+    return 0;
 }
 
 int A5(int L, int C, int l, int c, int *maze){

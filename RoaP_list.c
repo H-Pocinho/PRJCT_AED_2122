@@ -32,7 +32,7 @@ data *cria_no(int C,int L){
 
 
 /*
-*Nome da funcao: insere_head
+*Nome da funcao: push
 *
 *Objetivo da funcao: insere um nó na cabeça da lista
 *
@@ -44,7 +44,7 @@ data *cria_no(int C,int L){
 *       *head: ponteiro para cabeça da lista com o nó já inserido
 */
 
-data *insere_head(data *head,data *nodulo){
+data *push(data *head,data *nodulo){
     if (head==NULL)
     {
         head = nodulo;
@@ -57,7 +57,7 @@ data *insere_head(data *head,data *nodulo){
 
 
 /*
-*Nome da funcao: read_remove_head
+*Nome da funcao: read_pop
 *
 *Objetivo da funcao: Ler e remover o nó da cabeça da lista (POP)
 *
@@ -70,7 +70,7 @@ data *insere_head(data *head,data *nodulo){
 *       *head: ponteiro para cabeça da lista com o nó já removido
 */
 
-data *read_remove_head(data *head,int *C,int *L){
+data *read_pop(data *head,int *C,int *L){
     data *tmp = head;                   //guarda a head
 
 
@@ -107,30 +107,3 @@ void liberta_lista(data *head){
     }
 }
 
-/*
-*Nome da funcao: search
-*
-*Objetivo da funcao: procura um nó com um certo conteudo numa lista
-*
-*Argumentos de entrada:
-*       *head : ponteiro para a cabeça da lista
-*       C : parametro que se quer ter no nó
-*       L : parametro que se quer ter no nó
-*
-*Argumentos de saida:
-*       0 : o nó existe
-*       1 : o nó não existe
-* 
-*/
-
-
-int search(data* head, int C, int L){
-    data* current = head;  // Initialize current
-    while (current != NULL)
-    {
-        if (current->c == C && current->l == L )
-            return 0;
-        current = current->next;
-    }
-    return 1;
-}

@@ -15,17 +15,18 @@
 * 
 */
 
-data *cria_no(int C,int L){
+data *cria_no(int C,int L,int dist){
     data *novoNo;
     
     if((novoNo = (data*) malloc(sizeof(data)))==NULL){          //Aloca espaço para o nó
-        printf("Calloc falhou\n");
-        exit(EXIT_FAILURE);
+        exit(0);
     }
 
     novoNo->c=C;
     novoNo->l=L;
+    novoNo->dist=dist;
     novoNo->next=NULL;
+
 
     return novoNo;
 }
@@ -106,4 +107,55 @@ void liberta_lista(data *head){
         free(aux);                      //dá free ao nó 
     }
 }
+
+
+
+data *addWithPriority(int c,int l, int dist,data *head){
+
+    data* new = cria_no(c,l,dist);
+
+    if (head==NULL)
+    {
+        head = new;
+        return head;
+    }else{
+        data *auxN=head;
+        data *auxP=NULL;
+
+        while(auxN!=NULL){
+            if (auxN->l < dist)
+            {   
+                auxP=auxN;
+                auxN=auxN->next;
+            }else{
+                if (auxP==NULL)
+                { 
+                    new->next=auxN;
+                    head = new;
+                    return head;
+                }        
+                new->next=auxN;
+                auxP->next=new;
+                return head;
+            }
+        }
+        auxP->next=new;
+        return head;
+    }
+}
+
+data* extract(int *c,int *l,int *dist,data *head){
+    data *tmp = head;                   //guarda a head
+
+    *c=head->c;
+    *l=head->l;
+    *dist=head->dist;
+
+    head = tmp->next;                   //Colocação da nova head
+    free(tmp);                          //Remoção da antiga head
+
+    return head;
+}
+
+
 

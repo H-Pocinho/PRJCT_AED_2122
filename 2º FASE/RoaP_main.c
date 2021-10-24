@@ -6,6 +6,8 @@ int main(int argc, char *argv[]){
     if (argc==3 && strcmp("-s",argv[1])==0)
     {
         FASE1(argv[2]);
+    }else if(argc==2){
+        FASE2(argv[1]);
     }
 
 }
@@ -190,11 +192,6 @@ void FASE1(char str[]){
     free(filename);
 }
 
-
-/*
-*/
-
-
 int A1(int L, int C, int lIMP, int cIMP, int *maze){
     if (cIMP-1<0 || lIMP-1<0 || lIMP>L || cIMP>C)
     {
@@ -203,7 +200,6 @@ int A1(int L, int C, int lIMP, int cIMP, int *maze){
         return (maze[(lIMP-1)*C + cIMP-1]);
     }
 }
-
 
 int A234(int L, int C, int l, int c, int *maze,int v){
     int aux=0;
@@ -299,7 +295,7 @@ int A6(int L, int C, int linit, int cinit, int lend, int cend, int *maze){
         visited[i]='0';
     }
     
-    insertNode=cria_no(c,l);
+    insertNode=cria_no(c,l,0);
     stack=push(stack,insertNode);
 
     while(stack!=NULL){
@@ -318,22 +314,22 @@ int A6(int L, int C, int linit, int cinit, int lend, int cend, int *maze){
             
             if (A1(L,C,l-1,c,maze)==0)
             {
-                insertNode=cria_no(c,l-1);
+                insertNode=cria_no(c,l-1,0);
                 stack=push(stack,insertNode);
             }
             if (A1(L,C,l+1,c,maze)==0)
             {
-                insertNode=cria_no(c,l+1);
+                insertNode=cria_no(c,l+1,0);
                 stack=push(stack,insertNode);
             }
             if (A1(L,C,l,c-1,maze)==0)
             {
-                insertNode=cria_no(c-1,l);
+                insertNode=cria_no(c-1,l,0);
                 stack=push(stack,insertNode);
             }
             if (A1(L,C,l,c+1,maze)==0)
             {
-                insertNode=cria_no(c+1,l);
+                insertNode=cria_no(c+1,l,0);
                 stack=push(stack,insertNode);
             }
         }
@@ -344,3 +340,219 @@ int A6(int L, int C, int linit, int cinit, int lend, int cend, int *maze){
     return 0; 
 }
 
+void FASE2(char str[]){
+
+    FILE *fpIN, *fpOUT;
+
+    int C,L,P,i=0,c,l,v,cIMP,lIMP,flag=0,AUX=0;
+    int *labirinto;
+    char *filename;
+    int namesize=strlen(str);
+
+    if (str[namesize-1]!='n' || str[namesize-2]!='i' || str[namesize-3]!='.'){       //vê se o ficheiro tem a extensão .in
+        exit(0);
+    }
+
+    filename = (char*) malloc(sizeof(char)*(namesize+2));
+    if (filename==NULL){
+        exit(0);
+    }
+    for ( i = 0; i < (namesize+2); i++)
+    {
+        filename[i]='\0';
+    }
+    
+    
+
+    strcpy(filename,str);
+    filename[namesize]='l';
+    filename[namesize-1]='o';
+    filename[namesize-2]='s';
+
+
+    if ((fpIN= fopen(str, "r"))==NULL){                                     //abre o ficheiro de entrada
+        free(filename);
+        exit(0);
+    }
+
+    if ((fpOUT= fopen(filename, "w"))==NULL){                              //cria o ficheiro de saída
+        free(filename);
+        fclose(fpIN);
+        exit(0);
+    }
+
+    do{ 
+        if (flag==1){
+            fseek(fpIN,-sizeof(char),SEEK_CUR);
+            flag=0;
+        }
+        
+        if (fscanf(fpIN,"%d %d",&L,&C)!=2)
+        {
+            free(filename);
+            fclose(fpOUT);
+            fclose(fpIN);
+            exit(0);
+        }
+        
+
+        if (fscanf(fpIN, "%d %d",&lIMP,&cIMP)!=2)
+        {
+            fclose(fpOUT);
+            fclose(fpIN);
+            free(filename);
+            exit(0);
+        }
+        AUX++;
+        
+        if (fscanf(fpIN,"%d",&P)!=1)
+        {
+            fclose(fpOUT);
+            fclose(fpIN);
+            free(filename);
+            exit(0);
+        }
+
+        if (lIMP<1||cIMP<1||lIMP>L||cIMP>C)
+        {
+            fprintf(fpOUT, "%d\n\n", -1);
+            printf("LABIRINTO %d: %d\n",AUX,-1);
+            for ( i = 0; i < P; i++)
+            {
+                if (fscanf(fpIN,"%d %d %d",&l,&c,&v)!=3)
+                {
+                    fclose(fpOUT);
+                    fclose(fpIN);
+                    free(filename);
+                    exit(0);
+                } 
+            }
+            continue;
+        }
+
+
+        labirinto = (int *)malloc((C * L) * sizeof(int)); // aloca o espaço de memória para o labirinto
+
+        if (labirinto==NULL){
+            free(filename);
+            fclose(fpOUT);
+            fclose(fpIN);
+            exit(0);
+        }
+
+        /*inicializa as "casas" com custo 0*/
+        for (i = 0; i < L * C; i++)
+        {
+            labirinto[i] = 0;
+        }
+
+
+        /*atribui o valor às casas necessárias*/
+        for(i=0;i<P;i++){
+            if (fscanf(fpIN,"%d %d %d",&l,&c,&v)!=3)
+            {
+                free(labirinto);
+                fclose(fpOUT);
+                fclose(fpIN);
+                free(filename);
+                exit(0);
+            }
+            labirinto[(l-1)*C+c-1]=v;
+        }
+
+        if (A1(L,C,lIMP,cIMP,labirinto)!=0)
+        {
+           printf("LABIRINTO %d: %d\n",AUX,-1);
+           continue;
+        }
+        
+        v=magicRoapSolver(L,C,lIMP,cIMP,labirinto);
+        if(v==0){
+                free(labirinto);
+                fclose(fpOUT);
+                fclose(fpIN);
+                free(filename);
+                exit(0);
+        }
+        printf("LABIRINTO %d: %d\n",AUX,v);
+
+        flag=1;
+        free(labirinto);
+
+    }while((getc(fpIN)!=EOF));
+
+    fclose(fpOUT);
+    fclose(fpIN);
+    free(filename);
+}
+
+int magicRoapSolver(int L, int C, int lend, int cend, int *maze){
+    data* priority=NULL;
+    int auxC,auxL,auxDIST,V,i,ALT,VC,VL;
+    int VizC[4]={0,0,1,-1};
+    int VizL[4]={1,-1,0,0};
+
+    int* dist = (int *)malloc((C * L) * sizeof(int));
+    if (dist==NULL){
+        return 0;
+    }
+    
+   int* prev = (int *)malloc((C * L) * sizeof(int));
+    if (prev==NULL){
+        free(dist);
+        return 0;
+    }
+
+    for (i = 0; i < L * C; i++)
+    {
+        dist[i] = __INT_MAX__;
+        prev[i] = -1;
+    }
+
+    dist[0] = 0;
+    priority=addWithPriority(1,1,0,priority);
+
+
+    while(priority!=NULL){
+        priority = extract(&auxC,&auxL,&auxDIST,priority);
+        if (auxC==cend && auxL==lend)
+        {
+            free(dist);
+            free(prev);
+            liberta_lista(priority);
+
+            return 1;
+        }
+        
+
+        for (i = 0; i < 4; i++)
+        {
+            VC=auxC+VizC[i];
+            VL=auxL+VizL[i];
+            V=A1(L,C,VL,VC,maze);
+            if (V!=-1 && V!=-2 )
+            {
+                if (V!=0)
+                {
+                    if (A5(L,C,VL,VC,maze)==0)
+                    {
+                        continue;
+                    }
+                }
+                ALT = dist[(auxL-1)*C + auxC-1] + maze[(VL-1)*C + VC-1];
+                if (ALT<dist[(VL-1)*C + VC -1])
+                {
+                    dist[(VL-1)*C + VC-1]=ALT;
+                    prev[(VL-1)*C + VC-1]=(auxL-1)*C + auxC-1;
+                    priority=addWithPriority(VC,VL,dist[(VL-1)*C + VC-1],priority);
+                }
+                
+            }
+        }
+    }
+
+    free(dist);
+    free(prev);
+    liberta_lista(priority);
+    return -1;
+}

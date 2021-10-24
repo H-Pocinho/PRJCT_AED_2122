@@ -17,8 +17,9 @@
 
 
 typedef struct data{ //Struct que define um nó numa lista
-    int c;
-    int l;
+    int c;          
+    int l; 
+    int dist;          
 
     struct data* next;
 }data;
@@ -27,18 +28,25 @@ typedef struct data{ //Struct que define um nó numa lista
 //Funções do ficheiro RoaP_main.c
 
 void FASE1(char str[]);
+void FASE2(char str[]);
 int A1(int L, int C, int l, int c, int *maze);
 int A234(int L, int C, int l, int c, int *maze,int v);
 int A5(int L, int C, int l, int c, int *maze);
 int A6(int L,int C,int linit,int cinit,int lend,int cend,int *maze);
 
+int magicRoapSolver(int L, int C, int lend, int cend, int *maze);
+
 
 //Funções do ficheiro RoaP_list.c
 
-data *cria_no(int C,int L);
+data *cria_no(int C,int L,int dist);
 data *push(data *head,data *nodulo);
 data *read_pop(data *head,int *C,int *L);
 void liberta_lista(data *head);
+
+data *addWithPriority(int c,int l, int dist,data *head);
+data* extract(int *c,int *l,int *dist,data *head);
+
 
 
 

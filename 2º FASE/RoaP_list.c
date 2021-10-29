@@ -109,53 +109,90 @@ void liberta_lista(data *head){
 }
 
 
+int HInsert(int c,int l, int dist, int size, int Idx, Hdata** acervo){
+    if ((Idx+1) < size) {
+        acervo[Idx] = novaData(c,l,dist);
+        FixUp(acervo, Idx);
+        Idx++;
+    }
+    return Idx;
+}
 
-data *addWithPriority(int c,int l, int dist,data *head){
+int HRemove(int* c,int* l, int size, int Idx, Hdata** acervo){  //podemos eventualmente dar free do noó aqui
+    Hdata* aux;
+    *c=acervo[0]->c;
+    *l=acervo[0]->l;
 
-    data* new = cria_no(c,l,dist);
+    aux = acervo[0];
+    acervo[0] = acervo[Idx-1];
+    acervo[Idx-1] = aux;
+    free(acervo[Idx-1]);
+    acervo[Idx-1]=NULL;
 
-    if (head==NULL)
-    {
-        head = new;
-        return head;
-    }else{
-        data *auxN=head;
-        data *auxP=NULL;
+    FixDown(acervo,0,Idx-1);
+    Idx--;
+    return Idx;
+}
 
-        while(auxN!=NULL){
-            if (auxN->l < dist)
-            {   
-                auxP=auxN;
-                auxN=auxN->next;
-            }else{
-                if (auxP==NULL)
-                { 
-                    new->next=auxN;
-                    head = new;
-                    return head;
-                }        
-                new->next=auxN;
-                auxP->next=new;
-                return head;
-            }
-        }
-        auxP->next=new;
-        return head;
+
+Hdata* novaData(int C,int L, int DIST){
+    Hdata* aux = (Hdata *)malloc(sizeof(Hdata));
+    if (aux==NULL){
+        exit(0);
+    }
+    aux->c=C;
+    aux->l=L;
+    aux->dist=DIST;
+    return aux;
+}
+
+void FixUp(Hdata** acervo, int Idx){
+    while (Idx > 0 && (acervo[(Idx-1)/2]->dist > acervo[Idx]->dist)) {
+        Hdata* aux;
+
+        aux = acervo[Idx];
+        acervo[Idx] = acervo[(Idx-1)/2];
+        acervo[(Idx-1)/2] = aux;
+
+        Idx = (Idx-1)/2;
     }
 }
 
-data* extract(int *c,int *l,int *dist,data *head){
-    data *tmp = head;                   //guarda a head
 
-    *c=head->c;
-    *l=head->l;
-    *dist=head->dist;
+void FixDown(Hdata** acervo, int Idx, int N) {
 
-    head = tmp->next;                   //Colocação da nova head
-    free(tmp);                          //Remoção da antiga head
+    int next; 
+    Hdata* aux;
 
-    return head;
+    while(2*Idx < N-1) { 
+        next = 2*Idx+1;
+ 
+        if (next < (N-1) && (acervo[next]->dist > acervo[next+1]->dist)){
+            next++;
+        } 
+
+        if (acervo[Idx]->dist <= acervo[next]->dist){
+            break; 
+        } 
+        
+        aux = acervo[Idx];
+        acervo[Idx] = acervo[next];
+        acervo[next] = aux;
+
+        Idx = next;
+    }
 }
 
 
 
+void libertem_a_heap(Hdata** acervo,int size){
+    int i;
+    for (i = 0; i < size; i++)
+    {
+        if (acervo[i]!=NULL)
+        {
+        free(acervo[i]); 
+        }    
+    }    
+    free(acervo);
+}

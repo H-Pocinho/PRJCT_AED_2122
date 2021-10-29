@@ -1,5 +1,6 @@
 #include "RoaP.h"
 
+#define rebate(c,l,C) ({int retval; retval = (l-1)*C + c-1; retval;})
 
 int main(int argc, char *argv[]){
 
@@ -344,7 +345,7 @@ void FASE2(char str[]){
 
     FILE *fpIN, *fpOUT;
 
-    int C,L,P,i=0,c,l,v,cIMP,lIMP,flag=0,AUX=0;
+    int C,L,P,i=0,j=0,c,l,v,cIMP,lIMP,flag=0,AUX=0;
     int *labirinto;
     char *filename;
     int namesize=strlen(str);
@@ -381,6 +382,8 @@ void FASE2(char str[]){
         exit(0);
     }
 
+    free(filename);
+
     do{ 
         if (flag==1){
             fseek(fpIN,-sizeof(char),SEEK_CUR);
@@ -389,7 +392,6 @@ void FASE2(char str[]){
         
         if (fscanf(fpIN,"%d %d",&L,&C)!=2)
         {
-            free(filename);
             fclose(fpOUT);
             fclose(fpIN);
             exit(0);
@@ -400,22 +402,20 @@ void FASE2(char str[]){
         {
             fclose(fpOUT);
             fclose(fpIN);
-            free(filename);
             exit(0);
         }
-        AUX++;
+        AUX++; //A REMOVER
         
         if (fscanf(fpIN,"%d",&P)!=1)
         {
             fclose(fpOUT);
             fclose(fpIN);
-            free(filename);
             exit(0);
         }
 
         if (lIMP<1||cIMP<1||lIMP>L||cIMP>C)
         {
-            fprintf(fpOUT, "%d\n\n", -1);
+            fprintf(fpOUT, "%d\n\n", -1); // A ALTERAR
             printf("LABIRINTO %d: %d\n",AUX,-1);
             for ( i = 0; i < P; i++)
             {
@@ -423,7 +423,6 @@ void FASE2(char str[]){
                 {
                     fclose(fpOUT);
                     fclose(fpIN);
-                    free(filename);
                     exit(0);
                 } 
             }
@@ -434,7 +433,6 @@ void FASE2(char str[]){
         labirinto = (int *)malloc((C * L) * sizeof(int)); // aloca o espaço de memória para o labirinto
 
         if (labirinto==NULL){
-            free(filename);
             fclose(fpOUT);
             fclose(fpIN);
             exit(0);
@@ -454,24 +452,166 @@ void FASE2(char str[]){
                 free(labirinto);
                 fclose(fpOUT);
                 fclose(fpIN);
-                free(filename);
                 exit(0);
             }
             labirinto[(l-1)*C+c-1]=v;
         }
 
-        if (A1(L,C,lIMP,cIMP,labirinto)!=0)
+        if (A1(L,C,lIMP,cIMP,labirinto)!=0)  //dá para fazer esta verificação mais cedo
         {
            printf("LABIRINTO %d: %d\n",AUX,-1);
+           free(labirinto);
            continue;
         }
+
+        /*for ( j = 1; j <= L; j++)
+        {
+            for ( i = 1; i <= C; i++)
+            {
+                if (j==10 &&i==26)
+                {
+                    printf("& ");
+                    continue;
+                }
+                if (j==13 && i==51)
+                {
+                    printf("& ");
+                    continue;
+                }
+                if (j==18 && i==66)
+                {
+                    printf("& ");
+                    continue;
+                }
+                if (j==25 && i==67)
+                {
+                    printf("& ");
+                    continue;
+                }   
+                if (j==34 && i==61)
+                {
+                    printf("& ");
+                    continue;
+                }  
+                if (j==35 && i==56)
+                {
+                    printf("& ");
+                    continue;
+                }  
+                if (j==48 && i==101)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==47 && i==100)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==43 && i==76)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==43 && i==78)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==43 && i==80)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==43 && i==82)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==43 && i==84)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==43 && i==86)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==43 && i==88)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==43 && i==90)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==42 && i==91)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==41 && i==92)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==42 && i==93)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==43 && i==82)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==43 && i==94)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==44 && i==95)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==45 && i==96)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==46 && i==97)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==47 && i==98)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==47 && i==100)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==48 && i==101)
+                {
+                    printf("& ");
+                    continue;
+                }if (j==50 && i==101)
+                {
+                    printf("& ");
+                    continue;
+                }
+
+                
+
+                 
+                if (labirinto[(j-1)*C+i-1]==0)
+                {
+                    printf("%d ",0);
+                }else if (labirinto[(j-1)*C+i-1]==-1)
+                {
+                    printf("%c ",'X');
+                }else{
+                    printf("%c ",'+');
+                }                
+            }
+            printf("\n");
+        }
+        printf("\n");*/
+
+        
         
         v=magicRoapSolver(L,C,lIMP,cIMP,labirinto);
         if(v==0){
                 free(labirinto);
                 fclose(fpOUT);
                 fclose(fpIN);
-                free(filename);
                 exit(0);
         }
         printf("LABIRINTO %d: %d\n",AUX,v);
@@ -483,76 +623,171 @@ void FASE2(char str[]){
 
     fclose(fpOUT);
     fclose(fpIN);
-    free(filename);
 }
 
 int magicRoapSolver(int L, int C, int lend, int cend, int *maze){
-    data* priority=NULL;
-    int auxC,auxL,auxDIST,V,i,ALT,VC,VL;
+    unsigned int size = C*L, ocup=0,provDist,prevNode;
+    int PresC,PresL,NeighC=0,NeighL=0,NeighState,flag=0;
+    int i,j;
+
     int VizC[4]={0,0,1,-1};
     int VizL[4]={1,-1,0,0};
 
-    int* dist = (int *)malloc((C * L) * sizeof(int));
+    int* dist = (int *)malloc(size * sizeof(int));
     if (dist==NULL){
         return 0;
     }
     
-   int* prev = (int *)malloc((C * L) * sizeof(int));
+    unsigned int* prev = (unsigned int *)malloc(size * sizeof(int)); //marcar o prev de outra maneira
     if (prev==NULL){
         free(dist);
         return 0;
     }
 
-    for (i = 0; i < L * C; i++)
-    {
-        dist[i] = __INT_MAX__;
-        prev[i] = -1;
+    char* visited = (char *)malloc(size * sizeof(char));
+    if (visited==NULL){
+        free(dist);
+        free(prev);
+        return 0;
+    }
+    
+    Hdata** HEAP = (Hdata **)malloc(size * sizeof(Hdata*)); 
+    if (HEAP==NULL){
+        free(dist);
+        free(prev);
+        free(visited);
+        return 0;
     }
 
-    dist[0] = 0;
-    priority=addWithPriority(1,1,0,priority);
+    for (i = 0; i < size; i++)
+    {
+        dist[i] = __INT_MAX__;
+        prev[i] = 0;
+        HEAP[i] = NULL;
+        visited[i] = '0';
+    }
 
+    dist[0]=0;
+    ocup=HInsert(1,1,0,size,ocup,HEAP);
 
-    while(priority!=NULL){
-        priority = extract(&auxC,&auxL,&auxDIST,priority);
-        if (auxC==cend && auxL==lend)
-        {
+    while (HEAP[0]->dist!=__INT_MAX__){
+        ocup=HRemove(&PresC,&PresL,size,ocup,HEAP);
+        //printf("TIRADO: C:%d L:%d D:%d\n",PresC,PresL,dist[(PresL-1)*C + PresC-1]);
+        visited[(PresL-1)*C + PresC-1]='1';
+
+        if (PresC==cend && PresL==lend){
+            prevNode=(PresL-1)*C + PresC-1;
+            ocup=0;
+
+            do{
+                if (maze[prevNode]!=0){
+                    printf("%d %d\n",prevNode,maze[prevNode]);
+                    ocup=ocup+maze[prevNode];
+                }
+                prevNode=prev[prevNode];
+                    
+            } while (prevNode!=0);
+
+            printf("%d\n",ocup);
             free(dist);
             free(prev);
-            liberta_lista(priority);
-
+            free(visited);
+            libertem_a_heap(HEAP,size);
             return 1;
         }
         
 
-        for (i = 0; i < 4; i++)
+        if (maze[(PresL-1)*C + PresC-1]!=0){
+            prevNode=prev[(PresL-1)*C + PresC-1];
+                if (maze[prevNode]!=0){
+                    continue;
+                }
+                
+                if (prevNode+1==((PresL-1)*C + PresC-1)){  
+                    NeighC=PresC+1;
+                    NeighL=PresL;
+                    //printf("C:%d L:%d DIREITA\n",PresC,PresL);
+                }
+                else if (prevNode-1==((PresL-1)*C + PresC-1)){ 
+                    NeighC=PresC-1;
+                    NeighL=PresL;
+                    //printf("C:%d L:%d ESQUERDA\n",PresC,PresL);
+                }
+                else if (prevNode+C==((PresL-1)*C + PresC-1)){ 
+                    NeighC=PresC;
+                    NeighL=PresL+1;
+                    //printf("C:%d L:%d DESCE\n",PresC,PresL);
+                }
+                else if (prevNode-C==((PresL-1)*C + PresC-1)){ 
+                    NeighC=PresC;
+                    NeighL=PresL-1;
+                    //printf("C:%d L:%d SOBE\n",PresC,PresL);
+                }
+                
+                if(A1(L,C,NeighL,NeighC,maze)==0){
+                   if (visited[(NeighL-1)*C + NeighC-1]=='1'){
+                        continue;
+                    }                    
+                }else{
+                    continue;
+                }
+                //printf("C:%d L:%d D:%d PASSA\n",PresC,PresL,dist[(PresL-1)*C + PresC-1]);
+            provDist=dist[(PresL-1)*C + PresC-1] + maze[(NeighL-1)*C + NeighC-1];
+            
+            if (provDist<dist[(NeighL-1)*C + NeighC-1]){
+                dist[(NeighL-1)*C + NeighC-1]=provDist;
+                prev[(NeighL-1)*C + NeighC-1]=(PresL-1)*C + PresC-1;
+                //printf("COLOCADO: C:%d L:%d D:%d\n",NeighC,NeighL,dist[(NeighL-1)*C + NeighC-1]);
+                ocup=HInsert(NeighC,NeighL,provDist,size,ocup,HEAP);
+            }
+            continue;
+        }
+        
+
+        for ( i = 0; i < 4; i++)
         {
-            VC=auxC+VizC[i];
-            VL=auxL+VizL[i];
-            V=A1(L,C,VL,VC,maze);
-            if (V!=-1 && V!=-2 )
-            {
-                if (V!=0)
-                {
-                    if (A5(L,C,VL,VC,maze)==0)
+            NeighC=PresC+VizC[i];
+            NeighL=PresL+VizL[i];
+            NeighState=A1(L,C,NeighL,NeighC,maze);
+
+            if (NeighState==-1 || NeighState==-2){
+                continue;
+            } 
+
+            if (visited[(NeighL-1)*C + NeighC-1]=='1'){
+                continue;
+            }
+            
+            if (NeighState!=0){
+                if(NeighC+VizC[i]<=C && NeighC+VizC[i]>=1 && NeighL+VizL[i]<=L && NeighL+VizL[i]>=1){
+                    if (maze[(NeighL+VizL[i]-1)*C + NeighC+VizC[i]-1]!=0)
                     {
                         continue;
                     }
+                }else{
+                    continue;
                 }
-                ALT = dist[(auxL-1)*C + auxC-1] + maze[(VL-1)*C + VC-1];
-                if (ALT<dist[(VL-1)*C + VC -1])
-                {
-                    dist[(VL-1)*C + VC-1]=ALT;
-                    prev[(VL-1)*C + VC-1]=(auxL-1)*C + auxC-1;
-                    priority=addWithPriority(VC,VL,dist[(VL-1)*C + VC-1],priority);
-                }
-                
-            }
-        }
-    }
 
+                if (A5(L,C,NeighL,NeighC,maze)!=1){
+                    continue;
+                }
+            } 
+
+            provDist=dist[(PresL-1)*C + PresC-1] + maze[(NeighL-1)*C + NeighC-1];
+            
+            if (provDist<dist[(NeighL-1)*C + NeighC-1]){
+                dist[(NeighL-1)*C + NeighC-1]=provDist;
+                prev[(NeighL-1)*C + NeighC-1]=(PresL-1)*C + PresC-1;
+                //printf("COLOCADO: C:%d L:%d D:%d\n",NeighC,NeighL,dist[(NeighL-1)*C + NeighC-1]);
+                ocup=HInsert(NeighC,NeighL,provDist,size,ocup,HEAP);
+            }
+        }  
+    }
+            
     free(dist);
     free(prev);
-    liberta_lista(priority);
+    free(visited);
+    libertem_a_heap(HEAP,size);
     return -1;
 }
+

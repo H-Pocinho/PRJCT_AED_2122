@@ -48,7 +48,8 @@ int A234(int L, int C, int l, int c, int *maze,int v);
 int A5(int L, int C, int l, int c, int *maze);
 int A6(int L,int C,int linit,int cinit,int lend,int cend,int *maze);
 
-int magicRoapSolver(int L, int C, int lend, int cend, int *maze);
+int magicRoapSolver(int L, int C, int lend, int cend, int *maze,FILE* FPOUT);
+
 
 //Funções do ficheiro RoaP_list.c
 
@@ -56,6 +57,8 @@ data *cria_no(int C,int L,int dist);
 data *push(data *head,data *nodulo);
 data *read_pop(data *head,int *C,int *L);
 void liberta_lista(data *head);
+
+
 
 int HInsert(int c,int l, int dist, int size, int Idx, Hdata** acervo);
 int HRemove(int* c,int* l, int size, int Idx, Hdata** acervo);

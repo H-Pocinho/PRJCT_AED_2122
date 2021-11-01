@@ -345,7 +345,7 @@ void FASE2(char str[]){
 
     FILE *fpIN, *fpOUT;
 
-    int C,L,P,i=0,j=0,c,l,v,cIMP,lIMP,flag=0,AUX=0;
+    int C,L,P,i=0,c,l,v,cIMP,lIMP,flag=0,AUX=0;
     int *labirinto;
     char *filename;
     int namesize=strlen(str);
@@ -415,8 +415,7 @@ void FASE2(char str[]){
 
         if (lIMP<1||cIMP<1||lIMP>L||cIMP>C)
         {
-            fprintf(fpOUT, "%d\n\n", -1); // A ALTERAR
-            printf("LABIRINTO %d: %d\n",AUX,-1);
+            fprintf(fpOUT, "%d\n\n", -1);
             for ( i = 0; i < P; i++)
             {
                 if (fscanf(fpIN,"%d %d %d",&l,&c,&v)!=3)
@@ -459,162 +458,18 @@ void FASE2(char str[]){
 
         if (A1(L,C,lIMP,cIMP,labirinto)!=0)  //dá para fazer esta verificação mais cedo
         {
-           printf("LABIRINTO %d: %d\n",AUX,-1);
+           fprintf(fpOUT, "%d\n\n", -1);
            free(labirinto);
            continue;
         }
-
-        /*for ( j = 1; j <= L; j++)
-        {
-            for ( i = 1; i <= C; i++)
-            {
-                if (j==10 &&i==26)
-                {
-                    printf("& ");
-                    continue;
-                }
-                if (j==13 && i==51)
-                {
-                    printf("& ");
-                    continue;
-                }
-                if (j==18 && i==66)
-                {
-                    printf("& ");
-                    continue;
-                }
-                if (j==25 && i==67)
-                {
-                    printf("& ");
-                    continue;
-                }   
-                if (j==34 && i==61)
-                {
-                    printf("& ");
-                    continue;
-                }  
-                if (j==35 && i==56)
-                {
-                    printf("& ");
-                    continue;
-                }  
-                if (j==48 && i==101)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==47 && i==100)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==43 && i==76)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==43 && i==78)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==43 && i==80)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==43 && i==82)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==43 && i==84)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==43 && i==86)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==43 && i==88)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==43 && i==90)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==42 && i==91)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==41 && i==92)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==42 && i==93)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==43 && i==82)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==43 && i==94)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==44 && i==95)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==45 && i==96)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==46 && i==97)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==47 && i==98)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==47 && i==100)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==48 && i==101)
-                {
-                    printf("& ");
-                    continue;
-                }if (j==50 && i==101)
-                {
-                    printf("& ");
-                    continue;
-                }
-
-                
-
-                 
-                if (labirinto[(j-1)*C+i-1]==0)
-                {
-                    printf("%d ",0);
-                }else if (labirinto[(j-1)*C+i-1]==-1)
-                {
-                    printf("%c ",'X');
-                }else{
-                    printf("%c ",'+');
-                }                
-            }
-            printf("\n");
-        }
-        printf("\n");*/
-
         
-        
-        v=magicRoapSolver(L,C,lIMP,cIMP,labirinto);
+        v=magicRoapSolver(L,C,lIMP,cIMP,labirinto,fpOUT);
         if(v==0){
                 free(labirinto);
                 fclose(fpOUT);
                 fclose(fpIN);
                 exit(0);
         }
-        printf("LABIRINTO %d: %d\n",AUX,v);
 
         flag=1;
         free(labirinto);
@@ -625,10 +480,11 @@ void FASE2(char str[]){
     fclose(fpIN);
 }
 
-int magicRoapSolver(int L, int C, int lend, int cend, int *maze){
+int magicRoapSolver(int L, int C, int lend, int cend, int *maze,FILE* FPOUT){
     unsigned int size = C*L, ocup=0,provDist,prevNode;
-    int PresC,PresL,NeighC=0,NeighL=0,NeighState,flag=0;
+    int PresC,PresL,NeighC=0,NeighL=0,NeighState;
     int i,j;
+
 
     int VizC[4]={0,0,1,-1};
     int VizL[4]={1,-1,0,0};
@@ -672,30 +528,60 @@ int magicRoapSolver(int L, int C, int lend, int cend, int *maze){
 
     while (HEAP[0]->dist!=__INT_MAX__){
         ocup=HRemove(&PresC,&PresL,size,ocup,HEAP);
-        //printf("TIRADO: C:%d L:%d D:%d\n",PresC,PresL,dist[(PresL-1)*C + PresC-1]);
+
         visited[(PresL-1)*C + PresC-1]='1';
 
         if (PresC==cend && PresL==lend){
             prevNode=(PresL-1)*C + PresC-1;
             ocup=0;
+            i=0;
 
             do{
                 if (maze[prevNode]!=0){
-                    printf("%d %d\n",prevNode,maze[prevNode]);
+                    i++;
                     ocup=ocup+maze[prevNode];
                 }
                 prevNode=prev[prevNode];
-                    
             } while (prevNode!=0);
 
-            printf("%d\n",ocup);
-            free(dist);
-            free(prev);
+            fprintf(FPOUT,"%d\n",ocup);
+            if(ocup!=0){
+                fprintf(FPOUT,"%d\n",i);
+            }
             free(visited);
+            free(dist);
             libertem_a_heap(HEAP,size);
+
+            int* cinzento = (int *)malloc(i * sizeof(int));
+            if (cinzento==NULL){
+                return 0;
+            }
+            
+            prevNode=(PresL-1)*C + PresC-1;
+            j=i-1;
+            do{
+                if (maze[prevNode]!=0){
+                    cinzento[j]=prevNode;
+                    j--;
+                }
+                prevNode=prev[prevNode];
+            } while (prevNode!=0);
+
+            for ( j = 0; j < i; j++)
+            {
+                PresL=(cinzento[j]+1)/C+1;
+                PresC=(cinzento[j])%C+1;
+                fprintf(FPOUT,"%d %d %d\n",PresL,PresC,maze[cinzento[j]]);
+            }
+            fprintf(FPOUT,"\n");
+        
+
+            free(cinzento);   
+            free(prev);
+            
+            
             return 1;
         }
-        
 
         if (maze[(PresL-1)*C + PresC-1]!=0){
             prevNode=prev[(PresL-1)*C + PresC-1];
@@ -777,7 +663,7 @@ int magicRoapSolver(int L, int C, int lend, int cend, int *maze){
             
             if (provDist<dist[(NeighL-1)*C + NeighC-1]){
                 dist[(NeighL-1)*C + NeighC-1]=provDist;
-                prev[(NeighL-1)*C + NeighC-1]=(PresL-1)*C + PresC-1;
+                prev[(NeighL-1)*C + NeighC-1]=((PresL-1)*C + PresC-1);
                 //printf("COLOCADO: C:%d L:%d D:%d\n",NeighC,NeighL,dist[(NeighL-1)*C + NeighC-1]);
                 ocup=HInsert(NeighC,NeighL,provDist,size,ocup,HEAP);
             }
@@ -790,4 +676,3 @@ int magicRoapSolver(int L, int C, int lend, int cend, int *maze){
     libertem_a_heap(HEAP,size);
     return -1;
 }
-

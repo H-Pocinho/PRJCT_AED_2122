@@ -489,7 +489,7 @@ int magicRoapSolver(int L, int C, int lend, int cend, int *maze,FILE* FPOUT){
     int VizC[4]={0,0,1,-1};
     int VizL[4]={1,-1,0,0};
 
-    int* dist = (int *)malloc(size * sizeof(int));
+    unsigned int* dist = (unsigned int *)malloc(size * sizeof(int));
     if (dist==NULL){
         return 0;
     }
@@ -517,7 +517,7 @@ int magicRoapSolver(int L, int C, int lend, int cend, int *maze,FILE* FPOUT){
 
     for (i = 0; i < size; i++)
     {
-        dist[i] = __INT_MAX__;
+        dist[i] = 4294967295;
         prev[i] = 0;
         HEAP[i] = NULL;
         visited[i] = '0';
@@ -526,7 +526,7 @@ int magicRoapSolver(int L, int C, int lend, int cend, int *maze,FILE* FPOUT){
     dist[0]=0;
     ocup=HInsert(1,1,0,size,ocup,HEAP);
 
-    while (HEAP[0]->dist!=__INT_MAX__){
+    while (HEAP[0]->dist!=4294967295){
         ocup=HRemove(&PresC,&PresL,size,ocup,HEAP);
 
         visited[(PresL-1)*C + PresC-1]='1';

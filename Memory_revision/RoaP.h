@@ -63,7 +63,7 @@ data *read_pop(data *head, int *C, int *L);
 void liberta_lista(data *head);
 
 /*funçôes de manipulaçao de stack para a função de encontrar salas*/
-info *cria_no_info(int casa);
+info *cria_no_info(int c, int l, int C);
 info *push_info(info *head, info *nodulo);
 info *read_pop_info(info *head, int *casa);
 void liberta_info(info *head);

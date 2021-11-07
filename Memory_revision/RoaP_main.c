@@ -655,15 +655,37 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
     
 }
 
+void getvalues(int a[],int index, int C){
+    
+    /*
+
+      a[0] - line coordinate
+      a[1] - collumn coordinate
+
+    */
+
+    int aux;
+
+    for( aux=index, a[0]=0; aux<0; aux-=C){
+    
+        a[0]++;
+
+    }
+
+    a[0]--;
+    aux+=C; a[1]=aux;
+}
+
 
 int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
 {
     info *stack = NULL;
     info *insertNode = NULL;
     char *visited;
-    int c = 0, l = 0,cAUX=0,lAUX=0, casa=0, destino=(lend-1)*C+cend-1;
+    int casa;
     int i = 0;
     int count=-3;
+    int a[2];
 
     visited = (char *)malloc((C * L) * sizeof(char));
     if (visited == NULL)
@@ -677,18 +699,19 @@ int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
     }
 
 
-    for(casa=0; casa<L*C; casa++)
+    for(casa=0;casa<L*C;casa++)
     {
-        if(maze[casa]==0){
-            insertNode = cria_no_info(casa);
+        getvalues(a,casa,C);
+        if(maze[(a[0] - 1) * C + a[1] - 1]==0){
+            insertNode = cria_no_info(a[1], a[0], C);
             stack = push_info(stack, insertNode);
             
             while (stack != NULL)
             {
                 stack = read_pop_info(stack, &casa);
-                maze[casa]=count;
+                maze[(a[0] - 1) * C + a[1] - 1]=count;
 
-                if (casa==destino)
+                if (a[1] == cend && a[0] == lend)
                 {
                     if (count==-3)
                     {
@@ -700,31 +723,31 @@ int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
                     *Sala=abs(count)-3;
                 }
 
-                if (visited[casa] == '0')
+                if (visited[(a[0] - 1) * C + a[1] - 1] == '0')
                 {
-                    visited[casa] = '1';
-                    /*acima*/
-                    if (maze[casa-C] == 0)
+                    visited[(a[0] - 1) * C + a[1] - 1] = '1';
+                    /*cima*/
+                    if (A1(L, C, a[0] - 1, a[1], maze) == 0)
                     {
-                        insertNode = cria_no_info(casa-C);
+                        insertNode = cria_no_info(a[1], a[0] - 1, C);
                         stack = push_info(stack, insertNode);
                     }
-                    /*abaixo*/
-                    if (maze[casa+C] == 0)
+                    /*baixo*/
+                    if (A1(L, C, a[0] + 1, a[1], maze) == 0)
                     {
-                        insertNode = cria_no_info(casa+C);
+                        insertNode = cria_no_info(a[1], a[0] + 1, C);
                         stack = push_info(stack, insertNode);
                     }
                     /*esquerda*/
-                    if (maze[casa-1] == 0)
+                    if (A1(L, C, a[0], a[1] - 1, maze) == 0)
                     {
-                        insertNode = cria_no_info(casa-1);
+                        insertNode = cria_no_info(a[1] - 1, a[0], C);
                         stack = push_info(stack, insertNode);
                     }
                     /*direita*/
-                    if (maze[casa+1] == 0)
+                    if (A1(L, C, a[0], a[1] + 1, maze) == 0)
                     {
-                        insertNode = cria_no_info(casa+1);
+                        insertNode = cria_no_info(a[1] + 1, a[0], C);
                         stack = push_info(stack, insertNode);
                     }
                 }

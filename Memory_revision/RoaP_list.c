@@ -118,7 +118,7 @@ void liberta_lista(data *head)
 /*cria um novo no do tipo info 
 * recebe a coordenada das colunas, a coordenada das linhas e o número de colunas existentes no mapa 
 */
-info *cria_no_info(int casa){
+info *cria_no_info(int c, int l, int C){
 
     info *novoNo;
 
@@ -127,7 +127,7 @@ info *cria_no_info(int casa){
         exit(0);
     }
 
-    novoNo->casa = casa;
+    novoNo->casa = (l-1)*C +(c-1);
     novoNo->next = NULL;
 
     return novoNo;

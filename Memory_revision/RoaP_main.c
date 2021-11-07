@@ -661,10 +661,9 @@ int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
     info *stack = NULL;
     info *insertNode = NULL;
     char *visited;
-    int c = 0, l = 0,cAUX=0,lAUX=0;
+    int c = 0, l = 0,cAUX=0,lAUX=0, casa=0, destino=(lend-1)*C+cend-1;
     int i = 0;
     int count=-3;
-    int a[2];
 
     visited = (char *)malloc((C * L) * sizeof(char));
     if (visited == NULL)
@@ -678,19 +677,18 @@ int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
     }
 
 
-    for(casa=0;casa<L*C;casa++)
+    for(casa=0; casa<L*C; casa++)
     {
-        a[]=getvalues(casa,C);
-        if(maze[(a[0] - 1) * C + a[1] - 1]==0){
-            insertNode = cria_no_info(a[1], a[0], C);
+        if(maze[casa]==0){
+            insertNode = cria_no_info(casa);
             stack = push_info(stack, insertNode);
             
             while (stack != NULL)
             {
                 stack = read_pop_info(stack, &casa);
-                maze[(a[0] - 1) * C + a[1] - 1]=count;
+                maze[casa]=count;
 
-                if (a[1] == cend && a[0] == lend)
+                if (casa==destino)
                 {
                     if (count==-3)
                     {
@@ -702,31 +700,31 @@ int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
                     *Sala=abs(count)-3;
                 }
 
-                if (visited[(a[0] - 1) * C + a[1] - 1] == '0')
+                if (visited[casa] == '0')
                 {
-                    visited[(a[0] - 1) * C + a[1] - 1] = '1';
-                    /*cima*/
-                    if (A1(L, C, a[0] - 1, a[1], maze) == 0)
+                    visited[casa] = '1';
+                    /*acima*/
+                    if (maze[casa-C] == 0)
                     {
-                        insertNode = cria_no_info(a[1], a[0] - 1, C);
+                        insertNode = cria_no_info(casa-C);
                         stack = push_info(stack, insertNode);
                     }
-                    /*baixo*/
-                    if (A1(L, C, a[0] + 1, a[1], maze) == 0)
+                    /*abaixo*/
+                    if (maze[casa+C] == 0)
                     {
-                        insertNode = cria_no_info(a[1], a[0] + 1, C);
+                        insertNode = cria_no_info(casa+C);
                         stack = push_info(stack, insertNode);
                     }
                     /*esquerda*/
-                    if (A1(L, C, a[0], a[1] - 1, maze) == 0)
+                    if (maze[casa-1] == 0)
                     {
-                        insertNode = cria_no_info(a[1] - 1, a[0], C);
+                        insertNode = cria_no_info(casa-1);
                         stack = push_info(stack, insertNode);
                     }
                     /*direita*/
-                    if (A1(L, C, a[0], a[1] + 1, maze) == 0)
+                    if (maze[casa+1] == 0)
                     {
-                        insertNode = cria_no_info(a[1] + 1, a[0], C);
+                        insertNode = cria_no_info(casa+1);
                         stack = push_info(stack, insertNode);
                     }
                 }
@@ -741,20 +739,4 @@ int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
     count=abs(count)-3;
 
     return count;
-}
-
-int *getvalues(int index, int C){
-    /*a[0] - line coordinate
-      a[1] - collumn coordinate
-     */
-
-    int a[2], aux;
-
-    for( aux=index, a[0]=0; aux<0; aux-=C){
-        a[0]++;
-    }
-
-    a[0]--;
-    aux+=C; a[1]=aux;
-    return a;
 }

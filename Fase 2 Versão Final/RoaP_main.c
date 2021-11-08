@@ -659,20 +659,10 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
 int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
 {
     stack *S = NULL;
-    char *visited;
     unsigned int i = 0, index=0;
     int count=-3;
-
-    visited = (char *)malloc((C * L) * sizeof(char));
-    if (visited == NULL)
-    {
-        exit(0);
-    }
     
-    for (i = 0; i < L * C; i++)
-    {
-        visited[i] = '0';
-    }
+
 
     S=createStack(C*L);
 
@@ -691,16 +681,11 @@ int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
                     {
                         if (count==-3)
                         {
-                            free(visited);
                             freeStack(S);
                             return -1;
                         }
                         *Sala=abs(count)-3;
                     }
-
-                    if (visited[index] == '0')
-                    {   
-                        visited[index] = '1';
 
                         if (index>C)
                         {
@@ -730,13 +715,10 @@ int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
                                 pushStack(S,index-1);
                             }
                         }
-                    }
                 }
                 count--;
             }
     }
-
-    free(visited);
     freeStack(S);
     count=abs(count)-3;
 

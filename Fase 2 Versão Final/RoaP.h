@@ -6,6 +6,8 @@
 #include <getopt.h>
 #include <string.h>
 #include <ctype.h>
+#include <limits.h>
+
 
 
 /*
@@ -32,6 +34,13 @@ typedef struct edge
     int l;
     struct edge* next;
 } edge;
+
+
+typedef struct stack {
+    int top;
+    unsigned capacity;
+    int* array;
+} stack;
 
 // Funções do ficheiro RoaP_main.c
 
@@ -63,6 +72,19 @@ void FixDown(int *acervo, int Idx, int *distancia,int Vn);
 int removeFromHeap(int* vertex,int *acervo,int *distancia,int nV,int ocup);
 int addToHeap(int vertex,int *acervo,int *distancia,int nV,int ocup);
 int inHeap(int *acervo,int nV,int vertex);
+
+
+
+stack* createStack(unsigned capacity);
+int isFullStack(stack*);
+int isEmptyStack(stack*);
+void pushStack(stack*, int);
+int popStack(stack*);
+int peekStack(stack*);
+void freeStack(stack*);
+
+
+
 
 
 #endif

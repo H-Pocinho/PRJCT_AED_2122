@@ -658,11 +658,9 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
 
 int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
 {
-    data *stack = NULL;
-    data *insertNode = NULL;
+    stack *S = NULL;
     char *visited;
-    int c = 0, l = 0,cAUX=0,lAUX=0;
-    int i = 0;
+    unsigned int i = 0, index=0;
     int count=-3;
 
     visited = (char *)malloc((C * L) * sizeof(char));
@@ -676,66 +674,70 @@ int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
         visited[i] = '0';
     }
 
+    S=createStack(C*L);
 
-    for ( cAUX = 1; cAUX <= C; cAUX++)
+
+    for ( i = 0; i < C*L; i++)
     {
-        for ( lAUX = 1; lAUX <= L; lAUX++)
-        {
-            if(maze[(lAUX - 1) * C + cAUX - 1]==0){
-                insertNode = cria_no(cAUX, lAUX);
-                stack = push(stack, insertNode);
-                
-                while (stack != NULL)
+            if(maze[i]==0){
+                pushStack(S,i);
+                while (isEmptyStack(S)!=1)
                 {
-                    stack = read_pop(stack, &c, &l);
-                    maze[(l - 1) * C + c - 1]=count;
+                    index=popStack(S);
 
-                    if (c == cend && l == lend)
+                    maze[index]=count;
+
+                    if (index == (lend-1)*C + cend-1)
                     {
                         if (count==-3)
                         {
                             free(visited);
-                            liberta_lista(stack);
+                            freeStack(S);
                             return -1;
                         }
-                        
                         *Sala=abs(count)-3;
                     }
 
-                    if (visited[(l - 1) * C + c - 1] == '0')
-                    {
-                        visited[(l - 1) * C + c - 1] = '1';
+                    if (visited[index] == '0')
+                    {   
+                        visited[index] = '1';
 
-                        if (A1(L, C, l - 1, c, maze) == 0)
+                        if (index>C)
                         {
-                            insertNode = cria_no(c, l - 1);
-                            stack = push(stack, insertNode);
+                            if (maze[index-C]==0)
+                            {
+                                pushStack(S,index-C);
+                            }
                         }
-                        if (A1(L, C, l + 1, c, maze) == 0)
+                        if (index<L*C-C)
                         {
-                            insertNode = cria_no(c, l + 1);
-                            stack = push(stack, insertNode);
+                            if (maze[index+C]==0)
+                            {
+                                pushStack(S,index+C);
+                            }
                         }
-                        if (A1(L, C, l, c - 1, maze) == 0)
+                        if (((index+1)%C) !=0)
                         {
-                            insertNode = cria_no(c - 1, l);
-                            stack = push(stack, insertNode);
+                            if (maze[index+1]==0)
+                            {
+                                pushStack(S,index+1);
+                            }
                         }
-                        if (A1(L, C, l, c + 1, maze) == 0)
+                        if (((index)%C) !=0)
                         {
-                            insertNode = cria_no(c + 1, l);
-                            stack = push(stack, insertNode);
+                            if (maze[index-1]==0)
+                            {
+                                pushStack(S,index-1);
+                            }
                         }
                     }
                 }
                 count--;
             }
-        }
     }
 
     free(visited);
-    liberta_lista(stack);
-
+    freeStack(S);
     count=abs(count)-3;
 
     return count;

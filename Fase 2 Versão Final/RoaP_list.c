@@ -315,3 +315,60 @@ edge* addNODE(edge* ADJ,int weight,int no,int c,int l)
 
     return ADJ;   
 }
+
+
+
+stack* createStack(unsigned capacity)
+{
+    stack* queue = (stack*)malloc(sizeof(stack));
+    if (queue==NULL)
+    {
+        exit(0);
+    }
+    
+    queue->capacity = capacity;
+    queue->top = -1;
+    queue->array = (int*)malloc(queue->capacity * sizeof(int));
+    if (queue->array==NULL)
+    {
+        exit(0);
+    }
+    return queue;
+}
+ 
+int isFullStack(stack* stack)
+{
+    return stack->top == stack->capacity - 1;
+}
+ 
+
+int isEmptyStack(stack* stack)
+{
+    return stack->top == -1;
+}
+ 
+void pushStack(stack* stack, int item)
+{
+    if (isFullStack(stack))
+        return;
+    stack->array[++stack->top] = item;
+}
+ 
+int popStack(stack* stack)
+{
+    if (isEmptyStack(stack))
+        return INT_MIN;
+    return stack->array[stack->top--];
+}
+ 
+int peekStack(stack* stack)
+{
+    if (isEmptyStack(stack))
+        return INT_MIN;
+    return stack->array[stack->top];
+}
+
+void freeStack(stack* stack){
+    free(stack->array);
+    free(stack);
+}

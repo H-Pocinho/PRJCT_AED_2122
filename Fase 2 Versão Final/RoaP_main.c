@@ -396,6 +396,7 @@ void FASE2(char str[])
         exit(0);
     }
 
+    /*cria o nome do ficheiro de output*/
     filename = (char *)malloc(sizeof(char) * (namesize + 2));
     if (filename == NULL)
     {
@@ -428,6 +429,7 @@ void FASE2(char str[])
 
     do
     {
+        //verifica se há um novo labirinto
         if (flag == 1)
         {
             fseek(fpIN, -sizeof(char), SEEK_CUR);
@@ -498,13 +500,14 @@ void FASE2(char str[])
             labirinto[(l - 1) * C + c - 1] = v;
         }
 
+        //verifica se a casa destino e "valida"
         if (A1(L, C, lIMP, cIMP, labirinto) != 0)
         {
             fprintf(fpOUT, "%d\n\n", -1);
             free(labirinto);
             continue;
         }
-
+        //verifica se a casa de partida e "valida"
         if (A1(L, C, 1, 1, labirinto) != 0)
         {
             fprintf(fpOUT, "%d\n\n", -1);
@@ -512,8 +515,9 @@ void FASE2(char str[])
             continue;
         }
          
-
+        
         V=encontraSalas(L,C,lIMP,cIMP,labirinto,&SalaDoTesouro);
+        //casa de partida e casa de destino estao na mesma sala
         if (V==-1)
         {
             fprintf(fpOUT, "%d\n\n", 0);
@@ -545,6 +549,24 @@ void FASE2(char str[])
     fclose(fpIN);
 }
 
+
+/*
+ *Nome da funcao: magicRoapSolver
+ *
+ * Objetivo da funcao: descobrir o custo do caminho mais barato entre a casa de partida e a de destino
+ * 
+ * Argumentos de entrada:
+ *          objetivo: sala onde se encontra a casa de destino
+ *          nV: numero de salas
+ *          **adj: ponteiro para a estrutura de dados do grafo
+ *          *FPOUT: ponteiro para o ficheiro de output
+ * 
+ * Argumentos de saida:
+ *          1: se foi possivel chegar a uma resposta satisfatoria
+ *          0: o contrario de 1
+ * 
+ */ 
+
 int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
 {
     int i,j;
@@ -553,12 +575,14 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
     int PDist;
     edge* aux;
 
+    //aloca o vetor que contém as distâncias mínimas aos vértices
     int* dist = (int *)malloc(nV*sizeof(int));
     if (dist == NULL)
     {
         exit(0);
     }
 
+    //aloca o vetor que contém os vértices que correspondem ao caminho de menor custo
     int* prev = (int *)malloc(nV*sizeof(int));
     if (prev == NULL)
     {
@@ -566,6 +590,7 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
         exit(0);
     }
 
+    //aloca o acervo
     int* HEAP = (int*)malloc(nV*sizeof(int));
     if (HEAP == NULL)
     {
@@ -574,6 +599,7 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
         exit(0);
     }
 
+    //inicializa os valores nos diferentes parametros (em particular dá o valor "infinito" a valor das distâncias a todos os vertices) 
     for(i=0;i<nV;i++){
         prev[i]=-1;
         dist[i]=__INT_MAX__;
@@ -581,7 +607,7 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
     }
 
     dist[objectivo]=0;
-    ocup=addToHeap(objectivo,HEAP,dist,nV,ocup);
+    ocup=addToHeap(objectivo,HEAP,dist,nV,ocup);//adiciona o vertice que corresponde à sala destino à heap
 
     while (HEAP[0]!=-1)
     {
@@ -591,15 +617,17 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
             j=Present;
             i=prev[Present];
             ocup=0;
-            fprintf(FPOUT,"%d\n",dist[Present]);
+            
+            fprintf(FPOUT,"%d\n",dist[Present]);//escreve o custo total do caminho no ficheiro de saida
+            //indica quantas paredes foram partidas, caso tenham sido
             while (i!=-1)
             {
                 for (aux = adj[j]; aux != NULL; aux = aux->next){
                     if (aux->noLigado==i)
                     {
                         ocup++;
-                    }
-                    
+                    }  
+
                 }
                 j=i;
                 i=prev[i];
@@ -607,6 +635,7 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
             fprintf(FPOUT,"%d\n",ocup);
                         j=Present;
             i=prev[Present];
+            //indica que paredes foram partidas e qual o seu custo
             while (i!=-1)
             {
                 for (aux = adj[j]; aux != NULL; aux = aux->next){
@@ -628,7 +657,7 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
             return 0;
         }
 
-        
+        /*____Algoritmo de Dijkstra___*/
         for (aux = adj[Present]; aux != NULL; aux = aux->next){
             PDist=dist[Present]+aux->peso;
             if (PDist<dist[aux->noLigado])
@@ -656,6 +685,27 @@ int magicRoapSolver(int objectivo,int nV,edge** adj,FILE *FPOUT)
 }
 
 
+/*
+ * Nome da funcao: encontraSalas
+ *
+ * Objetivo da funcao: identificar quantas salas (espaços delimitados por paredes e/ou pelo limites do labirinto) 
+ *                      do labirinto existem e pinta-las
+ *                      
+ * Argumentos de entrada: 
+ *          L: numero total de linhas do labirinto
+ *          C: numero total de colunas do labirinto
+ *          lend: coordenada da linha da casa destino
+ *          cend: coorndenada da coluna da casa destino
+ *          *maze: ponteiro para o labirinto
+ *          *Sala: ponteiro para int, onde se vai guardar a "cor" (numero identificador) da sala
+ * 
+ * Argumentos de saida:
+ *          count: numero de salas existentes no labirinto
+ *          -1: caso haja apenas uma sala
+ * 
+ */ 
+
+
 int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
 {
     stack *S = NULL;
@@ -679,7 +729,7 @@ int encontraSalas(int L, int C, int lend, int cend, int *maze,int* Sala)
 
                     if (index == (lend-1)*C + cend-1)
                     {
-                        if (count==-3)
+                        if (count==-3) 
                         {
                             freeStack(S);
                             return -1;
